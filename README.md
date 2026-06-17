@@ -48,3 +48,20 @@ continues until there is no more input.
 * The buffer `buf` temporarily stores data between `read()` and `write()`.
 * This program uses unbuffered I/O because it works directly with file descriptors.
 
+#### Program 1.3 — Copy standard input to standard output
+
+File: `programs/ch1/3.c`
+
+This program copies standard input to standard output using standard I/O.
+
+It reads one character at a time from `stdin` using `getc()` and writes each character to `stdout` using `putc()`. The loop continues until `getc()` returns `EOF`.
+
+##### Key concepts
+
+- `stdin` represents standard input.
+- `stdout` represents standard output.
+- `getc()` reads one character from a stream.
+- `putc()` writes one character to a stream.
+- `EOF` indicates the end of input.
+- `ferror()` checks whether an input error occurred.
+- `int c` is used so the program can store both character values and `EOF`.
