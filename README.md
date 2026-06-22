@@ -84,3 +84,33 @@ system creates a new process, so the process ID may be different each time.
 - `getpid()` returns the process ID of the current process.
 - `printf()` prints formatted output to standard output.
 - `exit(0)` terminates the program successfully.
+
+#### Program 1.5 — Read commands from standard input and execute them
+
+File: `programs/ch1/5.c`
+
+This program is a very small Unix shell.
+
+It prints a prompt, reads a command from standard input, creates a new child
+process using `fork()`, and executes the command in the child process using
+`execlp()`. The parent process waits for the child process to finish by calling
+`waitpid()`, then prints the prompt again.
+
+For example, if the user types `date`, the program creates a child process.
+The child process then executes the `date` command.
+
+##### Key concepts
+
+* A **shell** is a program that reads commands and executes them.
+* `fgets()` reads one line from standard input.
+* The newline character at the end of the input line is replaced with `'\0'`.
+* `fork()` creates a new child process.
+* After `fork()`, both the parent and child processes continue execution.
+* In the child process, `fork()` returns `0`.
+* In the parent process, `fork()` returns the process ID of the child.
+* `execlp()` replaces the current process image with a new program.
+* If `execlp()` succeeds, the code after it is not executed.
+* If `execlp()` fails, the child prints an error message and exits.
+* `waitpid()` makes the parent process wait for the child process to terminate.
+* `status` stores information about how the child process terminated.
+* The parent prints another prompt after the child command finishes.
