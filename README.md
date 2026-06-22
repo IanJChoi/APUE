@@ -114,3 +114,27 @@ The child process then executes the `date` command.
 * `waitpid()` makes the parent process wait for the child process to terminate.
 * `status` stores information about how the child process terminated.
 * The parent prints another prompt after the child command finishes.
+
+#### Program 1.6 — Demonstrate `strerror()` and `perror()`
+
+File: `programs/ch1/6.c`
+
+This program demonstrates two standard C error-handling functions:
+`strerror()` and `perror()`.
+
+First, it uses `strerror(EACCES)` to convert the error number `EACCES`
+into a readable error message.
+
+Then, it manually sets `errno` to `ENOENT` and calls `perror(argv[0])`.
+The `perror()` function prints the program name, followed by the error
+message corresponding to the current value of `errno`.
+
+##### Key concepts
+
+- `errno` stores an error code when a system call or library function fails.
+- `EACCES` usually represents a permission error.
+- `ENOENT` usually represents a missing file or directory.
+- `strerror()` converts an error number into a readable string.
+- `perror()` prints an error message based on the current value of `errno`.
+- `stderr` is used for error output.
+- `argv[0]` usually contains the name of the program being executed.
