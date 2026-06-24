@@ -101,19 +101,19 @@ The child process then executes the `date` command.
 
 ##### Key concepts
 
-* A **shell** is a program that reads commands and executes them.
-* `fgets()` reads one line from standard input.
-* The newline character at the end of the input line is replaced with `'\0'`.
-* `fork()` creates a new child process.
-* After `fork()`, both the parent and child processes continue execution.
-* In the child process, `fork()` returns `0`.
-* In the parent process, `fork()` returns the process ID of the child.
-* `execlp()` replaces the current process image with a new program.
-* If `execlp()` succeeds, the code after it is not executed.
-* If `execlp()` fails, the child prints an error message and exits.
-* `waitpid()` makes the parent process wait for the child process to terminate.
-* `status` stores information about how the child process terminated.
-* The parent prints another prompt after the child command finishes.
+- A **shell** is a program that reads commands and executes them.
+- `fgets()` reads one line from standard input.
+- The newline character at the end of the input line is replaced with `'\0'`.
+- `fork()` creates a new child process.
+- After `fork()`, both the parent and child processes continue execution.
+- In the child process, `fork()` returns `0`.
+- In the parent process, `fork()` returns the process ID of the child.
+- `execlp()` replaces the current process image with a new program.
+- If `execlp()` succeeds, the code after it is not executed.
+- If `execlp()` fails, the child prints an error message and exits.
+- `waitpid()` makes the parent process wait for the child process to terminate.
+- `status` stores information about how the child process terminated.
+- The parent prints another prompt after the child command finishes.
 
 #### Program 1.6 — Demonstrate `strerror()` and `perror()`
 
@@ -138,3 +138,24 @@ message corresponding to the current value of `errno`.
 - `perror()` prints an error message based on the current value of `errno`.
 - `stderr` is used for error output.
 - `argv[0]` usually contains the name of the program being executed.
+
+#### Program 1.7 — Print user ID and group ID
+
+File: `programs/ch1/7.c`
+
+This program prints the user ID and group ID of the current process.
+
+It calls `getuid()` to obtain the numeric user ID of the process, and
+`getgid()` to obtain the numeric group ID of the process. These IDs are
+assigned by the system and are used by Unix to identify users and groups
+when checking permissions.
+
+##### Key concepts
+
+- A user ID, or UID, is a numeric value that identifies a user.
+- A group ID, or GID, is a numeric value that identifies a group.
+- `getuid()` returns the user ID of the current process.
+- `getgid()` returns the group ID of the current process.
+- Unix uses numeric IDs internally instead of user names and group names.
+- UID 0 represents the superuser, also called `root`.
+- User IDs and group IDs are important for file permission checks.
