@@ -159,3 +159,31 @@ when checking permissions.
 - Unix uses numeric IDs internally instead of user names and group names.
 - UID 0 represents the superuser, also called `root`.
 - User IDs and group IDs are important for file permission checks.
+
+#### Program 1.8 — Read commands from standard input and execute them
+
+File: `programs/ch1/8.c`
+
+This program is a simple shell that reads commands from standard input
+and executes them using a child process.
+
+It is based on the earlier shell example, but adds signal handling for
+`SIGINT`. Normally, when the user types Control-C, the process receives
+`SIGINT` and terminates. This program changes that behavior by installing
+a signal handler with `signal()`.
+
+When `SIGINT` occurs, the function `sig_int()` is called instead of
+terminating the shell. The handler prints an interrupt message and then
+prints a new prompt.
+
+##### Key concepts
+
+- `SIGINT` is usually generated when the user types Control-C.
+- The default action for `SIGINT` is to terminate the process.
+- `signal()` installs a signal handler for a specific signal.
+- A signal handler is a function called when a signal occurs.
+- `SIG_ERR` indicates that installing the signal handler failed.
+- `fork()` creates a child process.
+- `execlp()` replaces the child process with a new program.
+- `waitpid()` makes the parent wait for the child process to finish.
+- `printf("%% ")` prints a literal `%` prompt.
