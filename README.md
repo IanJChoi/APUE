@@ -261,3 +261,38 @@ the `size` argument, if `size` is not `NULL`.
 - `malloc()` dynamically allocates memory for the pathname buffer.
 - One extra byte is needed for the null character `'\0'` at the end of a C string.
 - The returned pointer must eventually be freed by the caller using `free()`.
+
+#### Program 2.3 — Determine the number of file descriptors
+
+File: `programs/ch2/3.c`
+
+This program defines a function named `open_max()` that returns the maximum
+number of file descriptors that a process can have open at the same time.
+
+Some systems define `OPEN_MAX` in `<limits.h>`, but other systems may not
+define it. If `OPEN_MAX` is not available at compile time, this program calls
+`sysconf()` with `_SC_OPEN_MAX` to ask the system for the limit at run time.
+
+If the open-file limit is indeterminate, the program uses a guessed fallback
+value named `OPEN_MAX_GUESS`.
+
+This function is useful when a program needs to loop through all possible
+file descriptors, such as when a daemon process closes all inherited open
+files.
+
+##### Key concepts
+
+- A file descriptor is a small integer used by Unix to refer to an open file.
+- File descriptors `0`, `1`, and `2` usually represent standard input,
+  standard output, and standard error.
+- `OPEN_MAX` is the maximum number of files a process can have open at once,
+  if it is defined.
+- Some systems do not define `OPEN_MAX` at compile time.
+- `sysconf()` is used to obtain system limits at run time.
+- `_SC_OPEN_MAX` is passed to `sysconf()` to ask for the open-file limit.
+- A return value of `-1` from `sysconf()` does not always mean an error.
+- `errno` is set to `0` before calling `sysconf()` to distinguish an error
+  from an indeterminate value.
+- If `errno` remains `0`, the limit is indeterminate.
+- `OPEN_MAX_GUESS` is used when the open-file limit cannot be determined.
+- This value can be used in a loop to close all possible file descriptors.
