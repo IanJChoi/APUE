@@ -187,3 +187,41 @@ prints a new prompt.
 - `execlp()` replaces the child process with a new program.
 - `waitpid()` makes the parent wait for the child process to finish.
 - `printf("%% ")` prints a literal `%` prompt.
+
+#### Program 2.1 — Print system limits
+
+File: `programs/ch2/1.c`
+
+This program prints various system limits and path-dependent limits.
+
+It uses `sysconf()` to obtain limits that apply to the whole system, such as
+the maximum number of open files per process, the maximum argument length for
+`exec` functions, and the number of clock ticks per second.
+
+It uses `pathconf()` to obtain limits that depend on a specific pathname,
+such as the maximum filename length, maximum pathname length, pipe buffer size,
+and whether certain POSIX options are supported for that path.
+
+The program also handles the special case where a limit is not defined or has
+no fixed value. Since `sysconf()` and `pathconf()` can return `-1` both for
+real errors and for indeterminate limits, the program sets `errno` to `0`
+before each call and checks whether `errno` changed afterward.
+
+##### Key concepts
+
+- `sysconf()` returns system-wide run-time limits.
+- `pathconf()` returns limits associated with a specific path.
+- `_SC_` constants are used with `sysconf()`.
+- `_PC_` constants are used with `pathconf()` and `fpathconf()`.
+- Some limits are known at compile time through header files.
+- Some limits must be determined at run time.
+- Some limits depend on the filesystem or directory being checked.
+- `errno` must be cleared before calling `sysconf()` or `pathconf()` to distinguish an error from an indeterminate value.
+- A return value of `-1` with `errno != 0` means a real error occurred.
+- A return value of `-1` with `errno == 0` means the limit is not defined or has no fixed value.
+- `OPEN_MAX` describes the maximum number of open files per process.
+- `ARG_MAX` describes the maximum size of arguments passed to `exec` functions.
+- `NAME_MAX` describes the maximum length of a filename in a directory.
+- `PATH_MAX` describes the maximum length of a relative pathname for a directory.
+- `PIPE_BUF` describes the number of bytes that can be written atomically to a pipe or FIFO.
+- Portable Unix programs should not assume fixed numeric limits; they should query the system when necessary.
