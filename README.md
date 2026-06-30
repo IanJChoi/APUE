@@ -188,6 +188,8 @@ prints a new prompt.
 - `waitpid()` makes the parent wait for the child process to finish.
 - `printf("%% ")` prints a literal `%` prompt.
 
+### Chapter 2
+
 #### Program 2.1 — Print system limits
 
 File: `programs/ch2/1.c`
