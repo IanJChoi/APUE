@@ -225,3 +225,39 @@ before each call and checks whether `errno` changed afterward.
 - `PATH_MAX` describes the maximum length of a relative pathname for a directory.
 - `PIPE_BUF` describes the number of bytes that can be written atomically to a pipe or FIFO.
 - Portable Unix programs should not assume fixed numeric limits; they should query the system when necessary.
+
+#### Program 2.2 — Dynamically allocate space for a pathname
+
+File: `programs/ch2/2.c`
+
+This program defines a function named `path_alloc()` that dynamically
+allocates memory for a pathname.
+
+A pathname can have different maximum lengths on different systems. Some
+systems define `PATH_MAX` in `<limits.h>`, but other systems may not define
+it. If `PATH_MAX` is not available at compile time, this program calls
+`pathconf()` with `_PC_PATH_MAX` to ask the system for the pathname limit at
+run time.
+
+If the pathname limit is indeterminate, the program uses a guessed fallback
+value named `PATH_MAX_GUESS`. After deciding the pathname size, the function
+calls `malloc()` to allocate memory and returns a pointer to the allocated
+buffer.
+
+The function also stores the allocated size in the variable pointed to by
+the `size` argument, if `size` is not `NULL`.
+
+##### Key concepts
+
+- `PATH_MAX` is the maximum length of a pathname, if it is defined.
+- Some systems do not define `PATH_MAX` at compile time.
+- `pathconf()` is used to obtain pathname-related limits at run time.
+- `_PC_PATH_MAX` is passed to `pathconf()` to ask for the pathname limit.
+- A return value of `-1` from `pathconf()` does not always mean an error.
+- `errno` is set to `0` before calling `pathconf()` to distinguish an error
+  from an indeterminate value.
+- If `errno` remains `0`, the limit is indeterminate.
+- `PATH_MAX_GUESS` is used when the pathname limit cannot be determined.
+- `malloc()` dynamically allocates memory for the pathname buffer.
+- One extra byte is needed for the null character `'\0'` at the end of a C string.
+- The returned pointer must eventually be freed by the caller using `free()`.
