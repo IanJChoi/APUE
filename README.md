@@ -2,9 +2,7 @@
 
 My notes and practice programs while studying *Advanced Programming in the UNIX Environment*.
 
-## Programs
-
-### Chapter 1
+## Chapter 1
 
 #### Program 1.1 — List files in a directory
 
@@ -188,7 +186,7 @@ prints a new prompt.
 - `waitpid()` makes the parent wait for the child process to finish.
 - `printf("%% ")` prints a literal `%` prompt.
 
-### Chapter 2
+## Chapter 2
 
 #### Program 2.1 — Print system limits
 
