@@ -296,3 +296,68 @@ files.
 - If `errno` remains `0`, the limit is indeterminate.
 - `OPEN_MAX_GUESS` is used when the open-file limit cannot be determined.
 - This value can be used in a loop to close all possible file descriptors.
+
+#### Program 3.1 — Test whether standard input is seekable
+
+File: `programs/ch3/1.c`
+
+This program tests whether standard input is capable of seeking.
+
+It calls `lseek()` on `STDIN_FILENO` with an offset of `0` and `SEEK_CUR`.
+This does not move the file offset. Instead, it checks the current file
+offset and returns it if seeking is supported.
+
+If standard input refers to a regular file, `lseek()` succeeds and the
+program prints `seek OK`.
+
+If standard input refers to a pipe or FIFO, `lseek()` fails because pipes
+and FIFOs do not have a file offset that can be moved. In that case, the
+program prints `cannot seek`.
+
+##### Key concepts
+
+- `lseek()` changes or checks the current file offset.
+- `STDIN_FILENO` is the file descriptor for standard input.
+- `SEEK_CUR` means the offset is relative to the current file position.
+- `lseek(fd, 0, SEEK_CUR)` checks the current offset without changing it.
+- A regular file is usually seekable.
+- A pipe is not seekable because it is a sequential data stream.
+- A FIFO is also not seekable.
+- If `lseek()` succeeds, it returns the new file offset.
+- If `lseek()` fails, it returns `-1`.
+- If `lseek()` is used on a pipe or FIFO, `errno` is set to `ESPIPE`.
+
+#### Program 3.2 — Create a file with a hole in it
+
+File: `programs/ch3/2.c`
+
+This program creates a file named `file.hole` and intentionally leaves an
+unwritten region in the middle of the file.
+
+First, it creates the file using `creat()`. Then it writes 10 bytes,
+`abcdefghij`, at the beginning of the file. After this write, the file
+offset becomes 10.
+
+Next, the program calls `lseek(fd, 40, SEEK_SET)`. This moves the file
+offset to byte position 40 without writing anything to bytes 10 through 39.
+
+Finally, it writes another 10 bytes, `ABCDEFGHIJ`, starting at offset 40.
+As a result, the file size becomes 50 bytes, but the middle 30 bytes were
+never actually written. This unwritten region is called a file hole.
+
+When the hole is read back, it appears as zero bytes.
+
+##### Key concepts
+
+- `creat()` creates a new file or truncates an existing file.
+- `FILE_MODE` defines the permissions used when creating the file.
+- `write()` writes bytes starting at the current file offset.
+- After a successful `write()`, the file offset increases by the number of bytes written.
+- `lseek(fd, 40, SEEK_SET)` moves the file offset to byte position 40.
+- `SEEK_SET` means the offset is relative to the beginning of the file.
+- `lseek()` itself does not read or write any data.
+- Seeking past the end of a file is allowed.
+- Writing after seeking past the end creates a hole in the file.
+- A file hole is an unwritten region inside a file.
+- When a file hole is read, it returns bytes with value `0`.
+- Files with holes are often called sparse files.
