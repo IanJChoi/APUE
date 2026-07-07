@@ -361,3 +361,68 @@ When the hole is read back, it appears as zero bytes.
 - A file hole is an unwritten region inside a file.
 - When a file hole is read, it returns bytes with value `0`.
 - Files with holes are often called sparse files.
+
+#### Program 3.3 — Copy standard input to standard output
+
+File: `programs/ch3/3.c`
+
+This program copies data from standard input to standard output.
+
+It repeatedly calls `read()` to read bytes from `STDIN_FILENO` into a buffer,
+and then calls `write()` to write those bytes to `STDOUT_FILENO`. The program
+does not open files directly. Instead, input and output files can be connected
+by the shell using redirection.
+
+##### Key concepts
+
+- `read()` reads bytes from a file descriptor.
+- `write()` writes bytes to a file descriptor.
+- `STDIN_FILENO` represents standard input, usually file descriptor 0.
+- `STDOUT_FILENO` represents standard output, usually file descriptor 1.
+- Shell redirection can connect files to standard input and standard output.
+- Unix treats text files and binary files as byte streams at this level.
+- A larger buffer can reduce the number of system calls and improve I/O efficiency.
+
+#### Program 3.4 — Print file flags for a file descriptor
+
+File: `programs/ch3/4.c`
+
+This program prints the file status flags for a specified file descriptor.
+
+It takes one command-line argument, which is the file descriptor number. It then
+calls `fcntl()` with `F_GETFL` to get the file status flags. The program checks
+whether the descriptor is open for reading, writing, or both, and also prints
+additional flags such as append mode, nonblocking mode, or synchronous writes.
+
+##### Key concepts
+
+- `fcntl()` can inspect or modify properties of an open file descriptor.
+- `F_GETFL` gets the file status flags for a file descriptor.
+- `O_RDONLY` means the file is open for reading only.
+- `O_WRONLY` means the file is open for writing only.
+- `O_RDWR` means the file is open for both reading and writing.
+- `O_APPEND` means writes are added to the end of the file.
+- `O_NONBLOCK` means operations should not block if data is not ready.
+- `O_ACCMODE` is used to extract the access mode bits.
+
+#### Program 3.5 — Turn on file status flags
+
+File: `programs/ch3/5.c`
+
+This program defines a function that turns on one or more file status flags for
+an already open file descriptor.
+
+It first calls `fcntl()` with `F_GETFL` to get the current file status flags.
+Then it uses the bitwise OR operator to add the requested flags. Finally, it
+calls `fcntl()` with `F_SETFL` to store the updated flags back into the file
+descriptor.
+
+##### Key concepts
+
+- `F_GETFL` gets the current file status flags.
+- `F_SETFL` sets new file status flags.
+- Existing flags should be fetched before changing them.
+- `val |= flags` turns on selected flags without clearing the old ones.
+- `val &= ~flags` can be used to turn off selected flags.
+- File status flags include options such as `O_APPEND`, `O_NONBLOCK`, and `O_SYNC`.
+- Changing flags incorrectly can accidentally clear flags that were already set.
