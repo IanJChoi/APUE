@@ -426,3 +426,87 @@ descriptor.
 - `val &= ~flags` can be used to turn off selected flags.
 - File status flags include options such as `O_APPEND`, `O_NONBLOCK`, and `O_SYNC`.
 - Changing flags incorrectly can accidentally clear flags that were already set.
+
+#### Program 4.1 — Print file type for each command-line argument
+
+File: `programs/ch4/1.c`
+
+This program prints the file type of each pathname given as a command-line
+argument.
+
+It calls `lstat()` to get information about each file. The returned information
+is stored in a `struct stat` object. The program then checks the `st_mode` field
+using macros such as `S_ISREG`, `S_ISDIR`, and `S_ISLNK` to determine the file
+type.
+
+It uses `lstat()` instead of `stat()` so that symbolic links are reported as
+symbolic links. If `stat()` were used, the program would follow the symbolic
+link and report the type of the file it points to.
+
+##### Key concepts
+
+- `lstat()` gets file information without following symbolic links.
+- `struct stat` stores metadata about a file.
+- `st_mode` contains both file type information and permission bits.
+- `S_ISREG()` checks whether the file is a regular file.
+- `S_ISDIR()` checks whether the file is a directory.
+- `S_ISCHR()` checks whether the file is a character special file.
+- `S_ISBLK()` checks whether the file is a block special file.
+- `S_ISFIFO()` checks whether the file is a FIFO.
+- `S_ISLNK()` checks whether the file is a symbolic link.
+- `S_ISSOCK()` checks whether the file is a socket.
+
+#### Program 4.2 — Check file access using `access()` and `open()`
+
+File: `programs/ch4/2.c`
+
+This program demonstrates the difference between checking access permission
+with `access()` and actually opening a file with `open()`.
+
+It first calls `access()` with `R_OK` to check whether the real user can read
+the file. Then it calls `open()` with `O_RDONLY` to try to open the file for
+reading.
+
+This distinction is important for set-user-ID programs. `access()` checks
+permissions using the real user ID and real group ID, while `open()` checks
+permissions using the effective user ID and effective group ID.
+
+##### Key concepts
+
+- `access()` tests whether a file is accessible.
+- `R_OK` checks for read permission.
+- `F_OK` checks whether the file exists.
+- `W_OK` checks for write permission.
+- `X_OK` checks for execute permission.
+- `access()` uses the real user ID and real group ID.
+- `open()` uses the effective user ID and effective group ID.
+- In a set-user-ID program, `access()` can fail while `open()` succeeds.
+- This lets a privileged program check what the real user is allowed to do.
+
+#### Program 4.3 — Demonstrate the `umask()` function
+
+File: `programs/ch4/3.c`
+
+This program demonstrates how the file mode creation mask affects the
+permissions of newly created files.
+
+It first calls `umask(0)` so that no permission bits are disabled. Then it
+creates a file named `foo` with read and write permissions for the owner, group,
+and others.
+
+Next, it changes the mask so that group and others permissions are disabled.
+It then creates another file named `bar` with the same requested permissions.
+Because of the new mask, `bar` is created with permissions only for the owner.
+
+##### Key concepts
+
+- `umask()` sets the file mode creation mask for the current process.
+- The file creation mask controls which permission bits are turned off.
+- The final file mode is the requested mode with the `umask` bits removed.
+- `umask(0)` means no permission bits are disabled.
+- `creat()` creates a new file with a requested permission mode.
+- `S_IRUSR` means owner read permission.
+- `S_IWUSR` means owner write permission.
+- `S_IRGRP` and `S_IWGRP` are group read and write permissions.
+- `S_IROTH` and `S_IWOTH` are others read and write permissions.
+- Changing `umask()` in a child process does not change the parent shell’s `umask`.
