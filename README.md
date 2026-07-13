@@ -510,3 +510,82 @@ Because of the new mask, `bar` is created with permissions only for the owner.
 - `S_IRGRP` and `S_IWGRP` are group read and write permissions.
 - `S_IROTH` and `S_IWOTH` are others read and write permissions.
 - Changing `umask()` in a child process does not change the parent shell’s `umask`.
+
+#### Program 4.4 — Change file permissions using `chmod()`
+
+File: `programs/ch4/4.c`
+
+This program demonstrates how to change file permission bits with `chmod()`.
+
+For the file `foo`, it first calls `stat()` to obtain the current file mode.
+It then turns off the group-execute permission and turns on the set-group-ID
+bit while preserving the other permission bits.
+
+For the file `bar`, it sets the permissions directly to `rw-r--r--`,
+regardless of the file’s previous permissions.
+
+##### Key concepts
+
+- `chmod()` changes a file’s permission and special mode bits.
+- `stat()` retrieves the current file mode through `st_mode`.
+- `S_IXGRP` represents group-execute permission.
+- `S_ISGID` represents the set-group-ID bit.
+- `mode & ~flag` turns off a selected permission bit.
+- `mode | flag` turns on a selected permission bit.
+- Existing permissions should be retrieved first when only selected bits are changed.
+- Passing a complete mode to `chmod()` replaces the previous permission bits.
+- `S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH` produces `rw-r--r--`.
+
+
+#### Program 4.5 — Open a file and then unlink it
+
+File: `programs/ch4/5.c`
+
+This program opens a file named `tempfile` and then removes its directory
+entry with `unlink()`.
+
+Although the filename disappears immediately, the file itself is not fully
+deleted because it is still open. The program waits for 15 seconds before
+exiting, allowing the user to observe that the file cannot be found by name
+but still occupies disk space.
+
+When the process exits, the kernel closes the open file descriptor. If no
+other links or open descriptors remain, the file’s data and disk space are
+finally released.
+
+##### Key concepts
+
+- `open()` opens a file and creates an open file descriptor.
+- `unlink()` removes a filename from its directory.
+- Removing a directory entry does not always delete the file immediately.
+- An open file remains accessible through its file descriptor.
+- Disk space is released only when the link count is zero and no process has the file open.
+- `sleep()` keeps the process running so the file state can be observed.
+- Exiting the process automatically closes its open file descriptors.
+- Programs often unlink temporary files immediately after opening them.
+- This technique allows temporary files to be cleaned up automatically when a process exits.
+
+
+#### Program 4.6 — Truncate files while preserving their timestamps
+
+File: `programs/ch4/6.c`
+
+This program truncates each file given as a command-line argument to zero
+bytes while preserving its original access time and modification time.
+
+For each file, it first calls `stat()` to save the current timestamps. It then
+opens the file with `O_TRUNC`, which removes all file contents. Finally, it
+calls `utime()` to restore the saved access and modification times.
+
+##### Key concepts
+
+- `stat()` retrieves a file’s metadata and timestamps.
+- `st_atime` stores the file’s last access time.
+- `st_mtime` stores the file’s last modification time.
+- `O_TRUNC` reduces an existing file’s size to zero.
+- `O_TRUNC` requires the file to be opened with write access.
+- Truncating a file normally changes its modification time.
+- `struct utimbuf` stores a new access time and modification time.
+- `utime()` changes a file’s access and modification timestamps.
+- The file contents are removed, but the original timestamps are restored.
+- The program processes every filename supplied through `argv`.
