@@ -1,4 +1,4 @@
-# APUE Study Notes
+# APUE Study Note
 
 My notes and practice programs while studying *Advanced Programming in the UNIX Environment*.
 
