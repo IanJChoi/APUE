@@ -536,7 +536,6 @@ regardless of the file’s previous permissions.
 - Passing a complete mode to `chmod()` replaces the previous permission bits.
 - `S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH` produces `rw-r--r--`.
 
-
 #### Program 4.5 — Open a file and then unlink it
 
 File: `programs/ch4/5.c`
@@ -565,7 +564,6 @@ finally released.
 - Programs often unlink temporary files immediately after opening them.
 - This technique allows temporary files to be cleaned up automatically when a process exits.
 
-
 #### Program 4.6 — Truncate files while preserving their timestamps
 
 File: `programs/ch4/6.c`
@@ -589,3 +587,89 @@ calls `utime()` to restore the saved access and modification times.
 - `utime()` changes a file’s access and modification timestamps.
 - The file contents are removed, but the original timestamps are restored.
 - The program processes every filename supplied through `argv`.
+
+#### Program 4.7 — Recursively traverse a directory hierarchy
+
+File: `programs/ch4/7.c`
+
+This program recursively traverses a directory hierarchy and counts the number
+of files of each type.
+
+It starts from a pathname given on the command line, recursively visits every
+file and directory, and classifies each entry using `lstat()` and the file type
+stored in `st_mode`. At the end, it prints the count and percentage of each
+file type.
+
+##### Key concepts
+
+- `lstat()` retrieves information without following symbolic links.
+- `opendir()` opens a directory for reading.
+- `readdir()` reads one directory entry at a time.
+- `closedir()` closes a directory stream.
+- `struct dirent` represents a directory entry.
+- `"."` and `".."` must be skipped to avoid infinite recursion.
+- `S_ISDIR()` checks whether a pathname is a directory.
+- `S_IFMT` extracts the file type from `st_mode`.
+- Recursive traversal processes every file in the directory hierarchy.
+- Callback functions separate traversal logic from file processing.
+
+#### Program 4.8 — Change the current working directory
+
+File: `programs/ch4/8.c`
+
+This program demonstrates how to change the current working directory using
+`chdir()`.
+
+It attempts to change the current working directory to `/tmp`. If successful,
+it prints a confirmation message.
+
+##### Key concepts
+
+- `chdir()` changes the current working directory.
+- The working directory is maintained per process.
+- `chdir()` returns `0` on success and `-1` on failure.
+- A child process cannot change the parent's working directory.
+- Relative pathnames are resolved from the current working directory.
+
+#### Program 4.9 — Print the current working directory
+
+File: `programs/ch4/9.c`
+
+This program changes to a specified directory and prints its absolute pathname
+using `getcwd()`.
+
+It first calls `chdir()` to change the current working directory, allocates a
+buffer large enough for a pathname, and then calls `getcwd()` to retrieve the
+absolute path.
+
+##### Key concepts
+
+- `chdir()` changes the current working directory.
+- `getcwd()` returns the absolute pathname of the current directory.
+- `getcwd()` requires a buffer and its size.
+- `path_alloc()` allocates enough memory for a pathname.
+- `getcwd()` returns `NULL` on error.
+- Symbolic links can affect the pathname returned by `getcwd()`.
+
+#### Program 4.10 — Print `st_dev` and `st_rdev` values
+
+File: `programs/ch4/10.c`
+
+This program prints the device number associated with each pathname given on
+the command line.
+
+For each pathname, it calls `lstat()` to obtain file information, prints the
+filesystem device number (`st_dev`), and, for character or block special files,
+also prints the device number stored in `st_rdev`.
+
+##### Key concepts
+
+- `lstat()` retrieves file information without following symbolic links.
+- `st_dev` identifies the filesystem containing the file.
+- `st_rdev` identifies the actual device represented by a special file.
+- `major()` extracts the major device number.
+- `minor()` extracts the minor device number.
+- `S_ISCHR()` checks for character special files.
+- `S_ISBLK()` checks for block special files.
+- `st_rdev` is meaningful only for character and block special files.
+```
